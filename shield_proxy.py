@@ -29,13 +29,13 @@ def getListProxies():
             response = session.get(url, proxies=proxy, timeout=5)
             proxyList.append(proxy)
             print pu + ' useable'
-            if(len(proxyList) == 10):
+            if(len(proxyList) == 1):
                 break
         except Exception, e:
             print pu + ' unuseable'
             continue
     return proxyList
 
-a = getListProxies()
-for p in a:
-    print p
+#a = getListProxies()
+#for p in a:
+#    print p
