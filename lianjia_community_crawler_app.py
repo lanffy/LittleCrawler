@@ -86,7 +86,7 @@ def pageHandler(page_url):
     page_content_soup = httpGet(page_url)
     community_div = page_content_soup.find_all('a', attrs={'name':'selectDetail', 'title':re.compile(".*")})
     for a in community_div:
-        #communityHandler(lianjia_host + a['href'])
+        communityHandler(lianjia_host + a['href'])
         appCommunityHandler(a['key'])
 
 def communityHandler(community_url):
@@ -162,11 +162,11 @@ def mkdirAppDoc(name):
     if(not os.path.exists(app + '/' + name)):
         os.makedirs(app + '/' + name)
 
-district_name = setDistrictName('http://sh.lianjia.com/xiaoqu/shenzhuang/')
+#district_name = setDistrictName('http://sh.lianjia.com/xiaoqu/shenzhuang/')
 print district_name
 #listHandler('http://sh.lianjia.com/xiaoqu/beicai/')
-appCommunityHandler(5011102207057)
-os._exit(0)
+#appCommunityHandler(5011102207057)
+#os._exit(0)
 
 all_district_url = getAllDistrictUrl()
 for d_url in all_district_url:
