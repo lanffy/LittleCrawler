@@ -29,7 +29,7 @@ def getListProxies():
             response = session.get(url, proxies=proxy, timeout=5)
             proxyList.append(proxy)
             print pu + ' useable'
-            if(len(proxyList) == 1):
+            if(len(proxyList) == 10):
                 break
         except Exception, e:
             print pu + ' unuseable'
