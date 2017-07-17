@@ -8,6 +8,7 @@ import random
 import os.path,sys
 import math
 import time
+import json
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -15,6 +16,7 @@ sys.setdefaultencoding('utf8')
 #print proxies
 
 lianjia_host = "http://sh.lianjia.com"
+lianjia_app_host = "http://m.sh.lianjia.com/api/v1/m/strategy/contents/"
 
 dirname, filename = os.path.split(os.path.abspath(sys.argv[0]))
 print "running from", dirname
@@ -33,7 +35,7 @@ if(not os.path.exists(app)):
     os.makedirs(app)
 
 def httpGet(url):
-    time.sleep(0.2)
+    #time.sleep(0.5)
     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5)'
     headers = {'User-Agent': user_agent}
     session = requests.session()
@@ -84,7 +86,8 @@ def pageHandler(page_url):
     page_content_soup = httpGet(page_url)
     community_div = page_content_soup.find_all('a', attrs={'name':'selectDetail', 'title':re.compile(".*")})
     for a in community_div:
-        communityHandler(lianjia_host + a['href'])
+        #communityHandler(lianjia_host + a['href'])
+        appCommunityHandler(a['key'])
 
 def communityHandler(community_url):
     print '3->>>>>hand community:' + community_url + ' start====='
@@ -108,6 +111,40 @@ def communityHandler(community_url):
     file_hand.close()
     print '3->>>>>hand community:' + community_url + ' end====='
 
+def appCommunityHandler(community_id):
+    cid = str(community_id)
+    print '3->>>>>hand community:' + cid + ' start====='
+    app_url = lianjia_app_host + cid
+    print app_url
+    strategy_res = requests.get(app_url)
+    strategy_http_code = strategy_res.status_code
+    if(strategy_http_code != 200):
+        print '3->>>>>hand community error:' + cid + ' end====='
+        return
+    strategy_content = strategy_res.content
+    sc = json.loads(strategy_content)
+    sc_list = sc['data']['list']
+    if(not sc_list[0]['content'].has_key('content')):
+        print '3->>>>>not have strategy:' + cid + ' end====='
+        return
+    else:
+        name = sc['data']['name']
+        app_location = app + '/' + district_name + '/' + name + '.html'
+        file_hand = open(app_location, 'w+')
+        file_hand.write('<html><body><h1>' + name + '</h1>')
+        for l in sc_list:
+            file_hand.write('<h2>' + l['name'] + '</h2>')
+            if(l.has_key('content') and l['content'].has_key('content')):
+                file_hand.write(l['content']['content'])
+            children = l['children']
+            for c in children:
+                file_hand.write('<h3>' + c['name']  + '</h3>')
+                if(c.has_key('content') and c['content'].has_key('content')):
+                    file_hand.write(c['content']['content'])
+            file_hand.write('<hr/>')
+        file_hand.write('</body></html>')
+    print '3->>>>>hand community:' + cid + ' end====='
+
 def setDistrictName(district_url):
     page = httpGet(district_url)
     l_txt = page.find('div',attrs={'class':'fl l-txt'})
@@ -125,10 +162,11 @@ def mkdirAppDoc(name):
     if(not os.path.exists(app + '/' + name)):
         os.makedirs(app + '/' + name)
 
-#district_name = setDistrictName('http://sh.lianjia.com/xiaoqu/beicai/')
-#print district_name
+district_name = setDistrictName('http://sh.lianjia.com/xiaoqu/shenzhuang/')
+print district_name
 #listHandler('http://sh.lianjia.com/xiaoqu/beicai/')
-#os._exit(0)
+appCommunityHandler(5011102207057)
+os._exit(0)
 
 all_district_url = getAllDistrictUrl()
 for d_url in all_district_url:
