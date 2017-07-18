@@ -35,7 +35,7 @@ if(not os.path.exists(app)):
     os.makedirs(app)
 
 def httpGet(url):
-    #time.sleep(0.5)
+    time.sleep(0.1)
     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5)'
     headers = {'User-Agent': user_agent}
     session = requests.session()
@@ -86,7 +86,7 @@ def pageHandler(page_url):
     page_content_soup = httpGet(page_url)
     community_div = page_content_soup.find_all('a', attrs={'name':'selectDetail', 'title':re.compile(".*")})
     for a in community_div:
-        communityHandler(lianjia_host + a['href'])
+        #communityHandler(lianjia_host + a['href'])
         appCommunityHandler(a['key'])
 
 def communityHandler(community_url):
@@ -112,6 +112,7 @@ def communityHandler(community_url):
     print '3->>>>>hand community:' + community_url + ' end====='
 
 def appCommunityHandler(community_id):
+    time.sleep(0.5)
     cid = str(community_id)
     print '3->>>>>hand community:' + cid + ' start====='
     app_url = lianjia_app_host + cid
