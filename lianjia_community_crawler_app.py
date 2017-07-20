@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import shield_proxy
+import shield_proxy,our_proxy
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -12,8 +12,6 @@ import json
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-#proxies = shield_proxy.getListProxies()
-#print proxies
 
 lianjia_host = "http://sh.lianjia.com"
 lianjia_app_host = "http://m.sh.lianjia.com/api/v1/m/strategy/contents/"
@@ -36,12 +34,17 @@ if(not os.path.exists(app)):
 
 def httpGet(url):
     time.sleep(0.1)
-    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5)'
+    a = str(random.randint(1,10))
+    aa = str(random.randint(1,10))
+    b = str(random.randint(1,11))
+    c = str(random.randint(1,12))
+    d = str(random.randint(1,8))
+    user_agent = 'Mozilla/' + a + '.' + aa + ' (Macintosh; Intel Mac OS X '+b+'_'+c+'_'+d+')'
     headers = {'User-Agent': user_agent}
     session = requests.session()
-    page = session.get(url, headers=headers)
-    #p = proxies[random.randint(0,len(proxies) - 1)]
-    #page = session.get(url, proxies=p, headers=headers)
+    #page = session.get(url, headers=headers)
+    p = proxies[random.randint(0,len(proxies) - 1)]
+    page = session.get(url, proxies=p, headers=headers)
     soup = BeautifulSoup(page.text,'html.parser')#if not installed lxml, remove it
     return soup
 
@@ -164,10 +167,11 @@ def mkdirAppDoc(name):
         os.makedirs(app + '/' + name)
 
 #district_name = setDistrictName('http://sh.lianjia.com/xiaoqu/shenzhuang/')
-print district_name
+#print district_name
 #listHandler('http://sh.lianjia.com/xiaoqu/beicai/')
 #appCommunityHandler(5011102207057)
-#os._exit(0)
+#proxies = shield_proxy.getListProxies()
+proxies = our_proxy.getListProxies()
 
 all_district_url = getAllDistrictUrl()
 for d_url in all_district_url:
@@ -181,6 +185,7 @@ for d_url in all_district_url:
         all_block_url = getBlockUrl(d_url)
         for bl in all_block_url:
             print 'hand block:' + bl
+            proxies = our_proxy.getListProxies()
             listHandler(bl)
     else:
         listHandler(d_url)
