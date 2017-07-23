@@ -15,6 +15,7 @@ sys.setdefaultencoding('utf8')
 
 lianjia_host = "http://sh.lianjia.com"
 lianjia_app_host = "http://m.sh.lianjia.com/api/v1/m/strategy/contents/"
+proxies = our_proxy.getListProxies()
 
 dirname, filename = os.path.split(os.path.abspath(sys.argv[0]))
 print "running from", dirname
@@ -33,7 +34,8 @@ if(not os.path.exists(app)):
     os.makedirs(app)
 
 def httpGet(url):
-    time.sleep(0.1)
+    global proxies
+    time.sleep(0.01)
     a = str(random.randint(1,10))
     aa = str(random.randint(1,10))
     b = str(random.randint(1,11))
@@ -43,9 +45,26 @@ def httpGet(url):
     headers = {'User-Agent': user_agent}
     session = requests.session()
     #page = session.get(url, headers=headers)
-    p = proxies[random.randint(0,len(proxies) - 1)]
-    page = session.get(url, proxies=p, headers=headers)
+    length = len(proxies) - 1
+    for i in range(0, length):
+        p = proxies[i]
+        try:
+            page = session.get(url, proxies=p, headers=headers, timeout=2)
+            if(type(page) != 'NoneType'):
+                print 'http get ok,proxy:' + str(p)
+                break;
+            else:
+                continue
+        except Exception, e:
+            proxies = our_proxy.getListProxies()
+            i = 0
+            print 'http get failed,proxy:' + str(p)
+            continue
     soup = BeautifulSoup(page.text,'html.parser')#if not installed lxml, remove it
+    if(type(soup) == 'NoneType'):
+        proxies = our_proxy.getListProxies()
+        print 'get none type, try again'
+        return httpGet(url)
     return soup
 
 def getAllDistrictUrl():
@@ -69,12 +88,19 @@ def getBlockUrl(district_url):
     return all_block
 
 def getPageCommunityCount(url):
-    page_soup = httpGet(url)
-    page_community_count_div = page_soup.find('div', attrs={'class':'list-head clear'})
-    p_community_count = page_community_count_div.find('span').string
+    global proxies
+    try:
+        page_soup = httpGet(url)
+        page_community_count_div = page_soup.find('div', attrs={'class':'list-head clear'})
+        p_community_count = page_community_count_div.find('span').string
+    except Exception, e:
+        print 'get community count failed,try again:' + url
+        proxies = our_proxy.getListProxies()
+        return getPageCommunityCount(url)
     return p_community_count
 
 def listHandler(url):
+    proxies = our_proxy.getListProxies()
     print '1->>>>>hand list:' + url + ' start====='
     p_community_count = getPageCommunityCount(url)
     cc = int(math.ceil(int(p_community_count) / float(20)))
@@ -115,16 +141,30 @@ def communityHandler(community_url):
     print '3->>>>>hand community:' + community_url + ' end====='
 
 def appCommunityHandler(community_id):
-    time.sleep(0.5)
+    time.sleep(0.01)
     cid = str(community_id)
     print '3->>>>>hand community:' + cid + ' start====='
     app_url = lianjia_app_host + cid
     print app_url
-    strategy_res = requests.get(app_url)
-    strategy_http_code = strategy_res.status_code
-    if(strategy_http_code != 200):
-        print '3->>>>>hand community error:' + cid + ' end====='
-        return
+    global proxies
+    all_p = len(proxies) - 1
+    for i in range(0, all_p):
+        p = proxies[i]
+        try:
+            strategy_res = requests.get(app_url, proxies=p, timeout=2)
+        except Exception, e:
+            print '3->>>>>hand community get error:' + cid + ' end=====' + str(p)
+            proxies = our_proxy.getListProxies()
+            i = 0
+            continue
+        strategy_http_code = strategy_res.status_code
+        if(strategy_http_code != 200):
+            print '3->>>>>hand community http code error:' + cid + ' end=====' + str(p)
+            proxies = our_proxy.getListProxies()
+            i = 0
+            continue
+        else:
+            break
     strategy_content = strategy_res.content
     sc = json.loads(strategy_content)
     sc_list = sc['data']['list']
@@ -171,7 +211,6 @@ def mkdirAppDoc(name):
 #listHandler('http://sh.lianjia.com/xiaoqu/beicai/')
 #appCommunityHandler(5011102207057)
 #proxies = shield_proxy.getListProxies()
-proxies = our_proxy.getListProxies()
 
 all_district_url = getAllDistrictUrl()
 for d_url in all_district_url:
@@ -185,7 +224,6 @@ for d_url in all_district_url:
         all_block_url = getBlockUrl(d_url)
         for bl in all_block_url:
             print 'hand block:' + bl
-            proxies = our_proxy.getListProxies()
             listHandler(bl)
     else:
         listHandler(d_url)

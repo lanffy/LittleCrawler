@@ -13,10 +13,10 @@ proxy_url = 'http://10.48.160.62:1700/proxy.php'
 def getListProxies():
     proxy_res = requests.get(proxy_url)
     all_pr = json.loads(proxy_res.content)
-    pr = random.sample(all_pr, 10)
+    pr = random.sample(all_pr, 20)
     proxyList = []
     for p in pr:
-        proxy = {'http': p['ip'] + ':' + p['port']}
+        proxy = {p['proxy_type'].lower(): p['ip'] + ':' + p['port']}
         proxyList.append(proxy)
     return proxyList
 
