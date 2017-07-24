@@ -121,10 +121,9 @@ def pageHandler(page_url):
         cd_h2 = cd.find('a', attrs={'name':'selectDetail', 'title':re.compile(".*")})
         c_id = cd_h2['key']
         con = cd.find('div', attrs={'class':'con'})
-        block = con.find_all('a')[1].string
-        mkdirBlockDoc(block)
-        mkdirAppBlockDoc(block)
+        block = con.find_all('a')[1].string #mkdirBlockDoc(block) #mkdirAppBlockDoc(block)
         appCommunityHandler(c_id)
+        appCommunityHandlerNoStyle(c_id)
 
 def communityHandler(community_url):
     print '3->>>>>hand community:' + community_url + ' start====='
@@ -181,7 +180,8 @@ def appCommunityHandler(community_id):
         return
     else:
         name = sc['data']['name']
-        app_location = app + '/' + district_name + '/' + block + '/' + name + '.html'
+        #app_location = app + '/' + district_name + '/' + block + '/' + name + '.html'
+        app_location = app + '/' + district_name + '/' + name + '-链家攻略.html'
         file_hand = open(app_location, 'w+')
         file_hand.write('<html><body><h1>' + name + '</h1>')
         for l in sc_list:
@@ -230,20 +230,20 @@ def appCommunityHandlerNoStyle(community_id):
         return
     else:
         name = sc['data']['name']
-        app_location = app + '/' + district_name + '/' + block + '/' + name + '.txt'
+        app_location = app + '/' + district_name + '/' + name + '-链家攻略.txt'
         file_hand = open(app_location, 'w+')
-        file_hand.write('<html><body><h1>' + name + '</h1>')
+        file_hand.write(name + '\n')
         for l in sc_list:
-            file_hand.write('<h2>' + l['name'] + '</h2>')
+            file_hand.write(l['name'] + '\n')
             if(l.has_key('content') and l['content'].has_key('content')):
-                file_hand.write(l['content']['content'])
+                file_hand.write(l['content']['content'] + '\n')
             children = l['children']
             for c in children:
-                file_hand.write('<h3>' + c['name']  + '</h3>')
+                file_hand.write(c['name'] + '\n')
                 if(c.has_key('content') and c['content'].has_key('content')):
-                    file_hand.write(c['content']['content'])
-            file_hand.write('<hr/>')
-        file_hand.write('</body></html>')
+                    file_hand.write(c['content']['content'] + '\n')
+            file_hand.write('\n')
+        file_hand.write('\n')
     print '3->>>>>hand community:' + cid + ' end====='
 
 def setDistrictName(district_url):
@@ -281,7 +281,8 @@ def mkdirAppBlockDoc(block_name):
 #district_name = setDistrictName('http://sh.lianjia.com/xiaoqu/shenzhuang/')
 #print district_name
 #listHandler('http://sh.lianjia.com/xiaoqu/beicai/')
-#appCommunityHandler(5011102207057)
+#appCommunityHandlerNoStyle(5011102207057)
+#os._exit(0)
 #proxies = shield_proxy.getListProxies()
 
 all_district_url = getAllDistrictUrl()
