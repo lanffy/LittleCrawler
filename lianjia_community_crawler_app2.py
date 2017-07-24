@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import shield_proxy,our_proxy,comm_mapping
+import shield_proxy,our_proxy
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -181,8 +181,7 @@ def appCommunityHandler(community_id):
     else:
         name = sc['data']['name']
         #app_location = app + '/' + district_name + '/' + block + '/' + name + '.html'
-        acid = comm_mapping.getAnjukeCommIdByLianjiaCommid(cid)
-        app_location = app + '/' + district_name + '/' + name + '-'+str(acid)+'-链家攻略.html'
+        app_location = app + '/' + district_name + '/' + name + '-链家攻略.html'
         file_hand = open(app_location, 'w+')
         file_hand.write('<html><body><h1>' + name + '</h1>')
         for l in sc_list:
@@ -231,8 +230,7 @@ def appCommunityHandlerNoStyle(community_id):
         return
     else:
         name = sc['data']['name']
-        acid = comm_mapping.getAnjukeCommIdByLianjiaCommid(cid)
-        app_location = app + '/' + district_name + '/' + name + '-'+str(acid)+'-链家攻略.txt'
+        app_location = app + '/' + district_name + '/' + name + '-链家攻略.txt'
         file_hand = open(app_location, 'w+')
         file_hand.write(name + '\n')
         for l in sc_list:
