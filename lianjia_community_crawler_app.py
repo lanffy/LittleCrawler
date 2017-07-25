@@ -232,6 +232,11 @@ def appCommunityHandlerNoStyle(community_id):
     else:
         name = sc['data']['name']
         acid = comm_mapping.getAnjukeCommIdByLianjiaCommid(cid)
+        if(int(acid) > 0):
+            mapping_location = app + '/anjuke_comm.txt'
+            mlfh = open(mapping_location, 'a')
+            mlfh.write(acid + '=>\'' + name + '\',\n')
+            mlfh.close
         app_location = app + '/' + district_name + '/' + name + '-'+str(acid)+'-链家攻略.txt'
         file_hand = open(app_location, 'w+')
         file_hand.write(name + '\n')
