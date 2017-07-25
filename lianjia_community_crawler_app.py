@@ -292,6 +292,15 @@ def mkdirAppBlockDoc(block_name):
 #os._exit(0)
 #proxies = shield_proxy.getListProxies()
 
+all_district_url = [
+    'http://sh.lianjia.com/xiaoqu/zhabei/',
+    'http://sh.lianjia.com/xiaoqu/hongkou/',
+    'http://sh.lianjia.com/xiaoqu/qingpu/',
+    'http://sh.lianjia.com/xiaoqu/fengxian/',
+    'http://sh.lianjia.com/xiaoqu/jinshan/',
+    'http://sh.lianjia.com/xiaoqu/chongming/',
+    'http://sh.lianjia.com/xiaoqu/shanghaizhoubian/'
+]
 all_district_url = getAllDistrictUrl()
 for d_url in all_district_url:
     print '=====hand district:' + d_url + ' start====='
