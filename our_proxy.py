@@ -11,7 +11,8 @@ headers = {'User-Agent': user_agent}
 proxy_url = 'http://10.48.160.62:1700/proxy.php'
 
 def getListProxies():
-    proxy_res = requests.get(proxy_url)
+    p = {'http':'10.132.60.2:3128'}
+    proxy_res = requests.get(proxy_url, proxies=p)
     all_pr = json.loads(proxy_res.content)
     pr = random.sample(all_pr, 20)
     proxyList = []

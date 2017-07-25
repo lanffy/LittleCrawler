@@ -35,7 +35,7 @@ if(not os.path.exists(app)):
 
 def httpGet(url):
     global proxies
-    time.sleep(0.01)
+    #time.sleep(0.01)
     a = str(random.randint(1,10))
     aa = str(random.randint(1,10))
     b = str(random.randint(1,11))
@@ -148,7 +148,7 @@ def communityHandler(community_url):
     print '3->>>>>hand community:' + community_url + ' end====='
 
 def appCommunityHandler(community_id):
-    time.sleep(0.01)
+    #time.sleep(0.01)
     cid = str(community_id)
     print '3->>>>>hand community:' + cid + ' start====='
     app_url = lianjia_app_host + cid
@@ -199,7 +199,7 @@ def appCommunityHandler(community_id):
     print '3->>>>>hand community:' + cid + ' end====='
 
 def appCommunityHandlerNoStyle(community_id):
-    time.sleep(0.01)
+    #time.sleep(0.01)
     cid = str(community_id)
     print '3->>>>>hand community:' + cid + ' start====='
     app_url = lianjia_app_host + cid
@@ -235,7 +235,7 @@ def appCommunityHandlerNoStyle(community_id):
         if(int(acid) > 0):
             mapping_location = app + '/anjuke_comm.txt'
             mlfh = open(mapping_location, 'a')
-            mlfh.write(acid + '=>\'' + name + '\',\n')
+            mlfh.write(acid + '=>\'' + name + ',' +district_name+ '\',\n')
             mlfh.close
         app_location = app + '/' + district_name + '/' + name + '-'+str(acid)+'-链家攻略.txt'
         file_hand = open(app_location, 'w+')
