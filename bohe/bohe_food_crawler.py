@@ -15,6 +15,9 @@ sys.setdefaultencoding('utf8')
 #print proxies
 
 food_classify_url = "http://www.boohee.com/food/group/"
+host = 'http://www.boohee.com'
+max_page = 10
+max_group = 10
 
 def httpGet(url):
     time.sleep(0.1)
@@ -27,8 +30,9 @@ def httpGet(url):
     soup = BeautifulSoup(page.text,'html.parser')#if not installed lxml, remove it
     return soup
 
-def getPageDetail(page_url):
-    print '===========start========='
+# 详情页
+def handPageDetail(page_url):
+    print '==333== strat hand detail page:' + page_url
     page_detail = httpGet(page_url);
     classify_element_h2 = page_detail.find('h2', attrs={'class':'crumb'})
     classify_element_a = classify_element_h2.find_all('a')
@@ -36,7 +40,14 @@ def getPageDetail(page_url):
     classify_h2_text = re.sub('\s','',classify_element_h2.text)
     index = classify_h2_text.rfind('/')
     name = classify_h2_text[index+1:]
-    print 'classify:' + classify_string + ';name:' + name
+    img = page_detail.find('div',attrs={'class':'food-pic pull-left'}).find('img')['src']
+    alias_div = page_detail.find('ul',attrs={'class':'basic-infor'})
+    alias_div_li = alias_div.find('li').text
+    alias_div_li_name = re.sub(ur'别名：','',alias_div_li)
+    alias = '无'
+    if(len(alias_div_li) != len(alias_div_li_name)):
+        alias = alias_div_li_name
+    print 'classify:' + classify_string + ';name:' + name + ';alias:' + alias + ';image:' + img
     nutrition_info = page_detail.find('div',attrs={'class':'nutr-tag margin10'})
     nutrition_info2 = nutrition_info.find_all('dd',attrs={})
     nutrition_info3 = nutrition_info2[2:6]
@@ -54,7 +65,7 @@ def getPageDetail(page_url):
         name = tds[0]
         value = tds[1]
         print getMoreNutritionInfo(name) + ':' + re.sub(ur'大卡','',getMoreNutritionInfo(value))
-    print '=========== end ========='
+    print '==333==  end  hand detail page'
 
 def getMoreNutritionInfo(elment):
     name_inner = elment.find('a')
@@ -67,9 +78,41 @@ def getMoreNutritionInfo(elment):
         else:
             return elment.string
 
+def getListPages(url):
+    page_detail = httpGet(url)
+    food_list = page_detail.find('ul',attrs={'class':'food-list'})
+    food_list_lis = food_list.find_all('li',attrs={'class':'item clearfix'})
+    page_list = []
+    for li in food_list_lis:
+        a = li.find('div',attrs={'class':'text-box pull-left'}).find('a')['href']
+        page_list.append(a)
+    return page_list
+
+def handListPage(uri_list):
+    for page_uri in uri_list:
+        page_detail_url = host + page_uri
+        handPageDetail(page_detail_url)
+
+#handPageDetail('http://www.boohee.com/shiwu/yumi_xian')
+#getListPages('http://www.boohee.com/food/group/1?page=1')
+
+def listPageHandler(group_url):
+    for page in range(1, max_page+1):
+        page_url = group_url + '?page=' + str(page)
+        page_list = getListPages(page_url)
+        print '=='+str(page)+'== strat hand list page:' + page_url
+        handListPage(page_list)
+        print '=='+str(page)+'==  end  hand list page'
+
+def main():
+    for group_index in range(1, max_group+1):
+        group_url = food_classify_url + str(group_index)
+        print '==G'+str(group_index)+'== start hand group:' + group_url
+        listPageHandler(group_url)
+        print '==G'+str(group_index)+'==  end  hand group'
 
 
+max_group = 10
+max_page = 10
 
-getPageDetail('http://www.boohee.com/shiwu/mifan_zheng')
-
-
+main()
