@@ -48,6 +48,6 @@ def insertFoodEnergyRuler(food_id,food_classify_name,heat):
     conn.close()
     return food_energy_id
 
-print insertFoodClassify('te\'a\"st4')
+#print insertFoodClassify('te\'a\"st4')
 #print insertFood('玉米','别名',1.1,2.2,3.3,4.4,1,'http://www.baidu.com')
 #print insertFoodEnergyRuler(1,'玉米',1.22)
