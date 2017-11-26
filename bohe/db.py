@@ -60,6 +60,7 @@ def exportData(startId):
     if(len(results) == 0):
         print "no more data"
         exit(0)
+    exportFileHandl = open(exportFile,'w')
     for row in results:
         i = row[0]
         name = filter(row[1], False)
@@ -69,11 +70,13 @@ def exportData(startId):
         if(name):
             if name not in allNames:
                 print name
+                exportFileHandl.writelines(name)
                 allNames.append(name)
                 if(alias):
                     for a in alias:
                         if a not in allAliases:
                             print "#" + a
+                            exportFileHandl.writelines("#" + a)
                             allAliases.append(a)
     exportData(i)
 
@@ -94,6 +97,7 @@ def filter(strIn,isArr):
     else:
         return []
 
+exportFile = './foodData.txt'
 exportData(0)
 #a = filter("a，(a)b(b)c(c)    a（a）b（b）c（c）",False)
 #print insertFoodClassify('te\'a\"st4')
