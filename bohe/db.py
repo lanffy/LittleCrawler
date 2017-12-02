@@ -9,7 +9,7 @@ import MySQLdb
 #create a cursor
 
 def insertFoodClassify(classify_name):
-    conn = MySQLdb.connect('localhost','root','RaoLiang','test')
+    conn = MySQLdb.connect('localhost','root','','test')
     print 'insertFoodClassify:' + classify_name
     classify_name = re.sub(ur'\'|\"','',classify_name)
     cursor = conn.cursor()
@@ -24,7 +24,7 @@ def insertFoodClassify(classify_name):
     return food_classify_id
 
 def insertFood(name,alias,heat,carbohydrate,fat,protein,classify_id,img):
-    conn = MySQLdb.connect('localhost','root','RaoLiang','test')
+    conn = MySQLdb.connect('localhost','root','','test')
     name = re.sub(ur'\'|\"','',name)
     alias = re.sub(ur'\'|\"','',alias)
     print 'insertFood:' + name+","+str(alias)+","+str(heat)+","+str(carbohydrate)+","+str(fat)+","+str(protein)+","+str(classify_id)+",'"+img
@@ -37,7 +37,7 @@ def insertFood(name,alias,heat,carbohydrate,fat,protein,classify_id,img):
     return food_id
 
 def insertFoodEnergyRuler(food_id,food_classify_name,heat):
-    conn = MySQLdb.connect('localhost','root','RaoLiang','test')
+    conn = MySQLdb.connect('localhost','root','','test')
     food_classify_name = re.sub(ur'\'|\"','',food_classify_name)
     print 'insertFoodEnergyRuler:' + str(food_id)+",'"+food_classify_name+"',"+str(heat)
     cursor = conn.cursor()
@@ -51,7 +51,7 @@ def insertFoodEnergyRuler(food_id,food_classify_name,heat):
 allNames = []
 allAliases = []
 def exportData(startId):
-    conn = MySQLdb.connect('localhost','root','RaoLiang','test')
+    conn = MySQLdb.connect('localhost','root','','test')
     cursor = conn.cursor()
     sql = "select * from food where id>" + str(startId) + " order by id asc limit 500 "
     cursor.execute(sql)
@@ -98,11 +98,8 @@ def filter(strIn,isArr):
     else:
         return []
 
-exportFile = './foodData.txt'
-exportFileHandl = open(exportFile,'w')
-exportData(0)
-exportFileHandl.close()
-#a = filter("a，(a)b(b)c(c)    a（a）b（b）c（c）",False)
-#print insertFoodClassify('te\'a\"st4')
-#print insertFood('玉米','别名',1.1,2.2,3.3,4.4,1,'http://www.baidu.com')
-#print insertFoodEnergyRuler(1,'玉米',1.22)
+# export all food to train unit bot
+#exportFile = './foodData.txt'
+#exportFileHandl = open(exportFile,'w')
+#exportData(0)
+#exportFileHandl.close()
